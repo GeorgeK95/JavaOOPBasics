@@ -1,6 +1,7 @@
 package Judge;
 
 import IO.OutputWriter;
+import StaticData.ExceptionMessages;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -11,16 +12,20 @@ import java.util.List;
  */
 public class Tester {
     public void compareContent(String userOutput, String expectedOutput) {
-        OutputWriter.writeMessageOnNewLine("Reading files...");
-        String mismatchFilePath = getMismatchPath(expectedOutput);
-        List<String> actualOutputString = readTextFile(userOutput);
-        List<String> expectedOutputString = readTextFile(expectedOutput);
-        boolean mismatch = compareStrings(actualOutputString, expectedOutputString, mismatchFilePath);
-        if (mismatch) {
-            List<String> mismatchLines = readTextFile(mismatchFilePath);
-            mismatchLines.forEach(OutputWriter::writeMessageOnNewLine);
-        } else {
-            OutputWriter.writeMessageOnNewLine("No mismatches.");
+        try {
+            OutputWriter.writeMessageOnNewLine("Reading files...");
+            String mismatchFilePath = getMismatchPath(expectedOutput);
+            List<String> actualOutputString = readTextFile(userOutput);
+            List<String> expectedOutputString = readTextFile(expectedOutput);
+            boolean mismatch = compareStrings(actualOutputString, expectedOutputString, mismatchFilePath);
+            if (mismatch) {
+                List<String> mismatchLines = readTextFile(mismatchFilePath);
+                mismatchLines.forEach(OutputWriter::writeMessageOnNewLine);
+            } else {
+                OutputWriter.writeMessageOnNewLine("No mismatches.");
+            }
+        } catch (IOException iae) {
+            throw new IllegalArgumentException(ExceptionMessages.INVALID_PATH);
         }
     }
 
@@ -30,47 +35,37 @@ public class Tester {
         return folder + "\\mismatch.txt";
     }
 
-    private List<String> readTextFile(String path) {
+    private List<String> readTextFile(String path) throws IOException {
         List<String> lines = new ArrayList<>();
         File file = new File(path);
-        try {
-            FileReader fileReader = new FileReader(file);
-            try (BufferedReader br = new BufferedReader(fileReader)) {
-                String line = br.readLine();
-                while (!line.equals("")) {
-                    lines.add(line);
-                    line = br.readLine();
-                }
+        FileReader fileReader = new FileReader(file);
+        try (BufferedReader br = new BufferedReader(fileReader)) {
+            String line = br.readLine();
+            while (!line.equals("")) {
+                lines.add(line);
+                line = br.readLine();
             }
-
-        } catch (Exception e) {
-            OutputWriter.writeException("Error 404. Unable to read file.");
         }
+
         return lines;
     }
 
-    private boolean compareStrings(List<String> userOutput, List<String> expectedOutput, String mismatchPath) {
+    private boolean compareStrings(List<String> userOutput, List<String> expectedOutput, String mismatchPath) throws IOException {
         OutputWriter.writeMessageOnNewLine("Comparing files...");
         String output = "";
         boolean isMismatch = false;
-        try {
-            try (FileWriter fileWriter = new FileWriter(mismatchPath); BufferedWriter writer = new BufferedWriter(fileWriter)) {
-
-                for (int i = 0; i < expectedOutput.size(); i++) {
-                    String userLine = userOutput.get(i);
-                    String expectedLine = expectedOutput.get(i);
-                    if (!userLine.equals(expectedLine)) {
-                        output = String.format("mismatch -> expected(%s), actual(%s)%n", userLine, expectedLine);
-                        isMismatch = true;
-                    } else {
-                        output = String.format("line match -> %s%n", userLine);
-                    }
-
-                    writer.write(output);
+        try (FileWriter fileWriter = new FileWriter(mismatchPath); BufferedWriter writer = new BufferedWriter(fileWriter)) {
+            for (int i = 0; i < expectedOutput.size(); i++) {
+                String userLine = userOutput.get(i);
+                String expectedLine = expectedOutput.get(i);
+                if (!userLine.equals(expectedLine)) {
+                    output = String.format("mismatch -> expected(%s), actual(%s)%n", userLine, expectedLine);
+                    isMismatch = true;
+                } else {
+                    output = String.format("line match -> %s%n", userLine);
                 }
+                writer.write(output);
             }
-        } catch (Exception e) {
-            OutputWriter.writeException("Error 404. Unable to read file.");
         }
 
         return isMismatch;

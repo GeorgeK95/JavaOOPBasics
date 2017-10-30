@@ -59,18 +59,25 @@ public class IOManager {
     public void createDirectoryInCurrentFolder(String name) {
         String path = getCurrentDirectoryPath() + "\\" + name;
         File f = new File(path);
-        f.mkdir();
+        boolean wasDirMade = f.mkdir();
+        if (!wasDirMade) {
+            throw new IllegalArgumentException(ExceptionMessages.FORBIDDEN_SYMBOLS_CONTAINED_IN_NAME);
+        }
     }
 
     private static String getCurrentDirectoryPath() {
         return SessionData.currentPath;
     }
 
-    public void changeCurrentDirRelativePath(String relativePath) {
+    public void changeCurrentDirRelativePath(String relativePath) throws IOException {
         if (relativePath.equals("..")) {
-            String currentPath = SessionData.currentPath;
-            int lastSlashIndex = currentPath.lastIndexOf("\\");
-            SessionData.currentPath = currentPath.substring(0, lastSlashIndex);
+            try {
+                String currentPath = SessionData.currentPath;
+                int lastSlashIndex = currentPath.lastIndexOf("\\");
+                SessionData.currentPath = currentPath.substring(0, lastSlashIndex);
+            } catch (StringIndexOutOfBoundsException sioobe) {
+                throw new StringIndexOutOfBoundsException(ExceptionMessages.INVALID_DESTINATION);
+            }
         } else {
             String currentPath = SessionData.currentPath;
             currentPath += "\\" + relativePath;
@@ -78,16 +85,15 @@ public class IOManager {
         }
     }
 
-    public void changeCurrentDirAbsolute(String absolutePath) {
+    public void changeCurrentDirAbsolute(String absolutePath) throws IOException {
         File f = new File(absolutePath);
         if (!f.exists()) {
-            OutputWriter.writeException(ExceptionMessages.INVALID_PATH);
-            return;
+            throw new IOException(ExceptionMessages.INVALID_PATH);
         }
         SessionData.currentPath = absolutePath;
     }
 
-    public static void main(String[] args) throws IOException, InterruptedException {
+    public static void main(String[] args) /*throws IOException, InterruptedException*/ {
         IOManager ioManager = new IOManager();
         Tester tester = new Tester();
         DownloadManager downloadManager = new DownloadManager();

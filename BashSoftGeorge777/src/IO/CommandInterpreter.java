@@ -32,6 +32,20 @@ public class CommandInterpreter {
     public void interpretCommand(String line) throws IOException {
         String[] data = line.split("\\s+");
         String command = data[0];
+        try {
+            parseCommand(line, data, command);
+        } catch (IllegalArgumentException iae) {
+            OutputWriter.writeException(iae.getMessage());
+        } catch (StringIndexOutOfBoundsException sioobe) {
+            OutputWriter.writeException(sioobe.getMessage());
+        } catch (IOException ioe) {
+            OutputWriter.writeException(ioe.getMessage());
+        } catch (Throwable t) {
+            OutputWriter.writeException(t.getMessage());
+        }
+    }
+
+    private void parseCommand(String line, String[] data, String command) throws IOException {
         switch (command) {
             case "mkdir":
                 tryCreateDirectory(line, data);
@@ -179,7 +193,7 @@ public class CommandInterpreter {
         studentsRepository.loadData(data[1]);
     }
 
-    private void tryChangeAbsolutePath(String line, String[] data) {
+    private void tryChangeAbsolutePath(String line, String[] data) throws IOException {
         if (data.length != 2) {
             displayInvalidCommand(line);
             return;
@@ -188,7 +202,7 @@ public class CommandInterpreter {
         ioManager.changeCurrentDirAbsolute(data[1]);
     }
 
-    private void tryChangeRelativePath(String line, String[] data) {
+    private void tryChangeRelativePath(String line, String[] data) throws IOException {
         if (data.length != 2) {
             displayInvalidCommand(line);
             return;

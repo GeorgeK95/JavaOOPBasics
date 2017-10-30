@@ -31,8 +31,9 @@ public class StudentsRepository {
 
     public void loadData(String fileName) throws IOException {
         if (isDataInitialized) {
-            System.out.println(ExceptionMessages.DATA_ALREADY_INITIALIZED);
-            return;
+            throw new RuntimeException(ExceptionMessages.DATA_ALREADY_INITIALIZED);
+//            System.out.println(ExceptionMessages.DATA_ALREADY_INITIALIZED);
+//            return;
         }
         this.students = new LinkedHashMap<>();
         this.courses = new LinkedHashMap<>();
@@ -41,8 +42,9 @@ public class StudentsRepository {
 
     public void unloadData() {
         if (!isDataInitialized) {
-            System.out.println(ExceptionMessages.DATA_NOT_INITIALIZED);
-            return;
+            throw new RuntimeException(ExceptionMessages.DATA_NOT_INITIALIZED);
+//            System.out.println(ExceptionMessages.DATA_NOT_INITIALIZED);
+//            return;
         }
         this.students = null;
         this.courses = null;

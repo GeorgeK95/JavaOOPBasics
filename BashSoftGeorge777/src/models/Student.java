@@ -4,6 +4,7 @@ import IO.OutputWriter;
 import StaticData.ExceptionMessages;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -11,9 +12,9 @@ import java.util.Map;
  * Created by George-Lenovo on 6/29/2017.
  */
 public class Student {
-    String userName;
-    Map<String, Course> enrolledCourses;
-    Map<String, Double> marksByCourse;
+    private String userName;
+    private Map<String, Course> enrolledCourses;
+    private Map<String, Double> marksByCourse;
 
     public Student(String userName) {
         this.setUserName(userName);
@@ -23,13 +24,15 @@ public class Student {
 
     public void setMarkOnCourse(String courseName, int... scores) {
         if (!this.enrolledCourses.containsKey(courseName)) {
-            OutputWriter.writeException(ExceptionMessages.NOT_ENROLLED_IN_COURSE);
-            return;
+            throw new IllegalArgumentException(ExceptionMessages.NOT_ENROLLED_IN_COURSE);
+//            OutputWriter.writeException();
+//            return;
         }
 
         if (Course.NUMBER_OF_TASKS_ON_EXAM < scores.length) {
-            OutputWriter.writeException(ExceptionMessages.INVALID_NUMBER_OF_SCORES);
-            return;
+            throw new IllegalArgumentException(ExceptionMessages.INVALID_NUMBER_OF_SCORES);
+//            OutputWriter.writeException(ExceptionMessages.INVALID_NUMBER_OF_SCORES);
+//            return;
         }
 
         double mark = calculateMark(scores);
@@ -54,12 +57,15 @@ public class Student {
         return userName;
     }
 
-    public void setUserName(String userName) {
+    private void setUserName(String userName) {
+        if (userName == null || userName.equals("")) {
+            throw new IllegalArgumentException(ExceptionMessages.NULL_OR_EMPTY_VALUE);
+        }
         this.userName = userName;
     }
 
     public Map<String, Course> getEnrolledCourses() {
-        return enrolledCourses;
+        return Collections.unmodifiableMap(enrolledCourses);
     }
 
     public void setEnrolledCourses(Map<String, Course> enrolledCourses) {
@@ -67,7 +73,7 @@ public class Student {
     }
 
     public Map<String, Double> getMarksByCourse() {
-        return marksByCourse;
+        return Collections.unmodifiableMap(marksByCourse);
     }
 
     public void setMarksByCourse(Map<String, Double> marksByCourse) {
