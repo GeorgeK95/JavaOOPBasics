@@ -1,7 +1,7 @@
 package Repository;
 
 import IO.OutputWriter;
-import StaticData.ExceptionMessages;
+import exceptions.InvalidFilterException;
 
 import java.util.HashMap;
 import java.util.function.Predicate;
@@ -14,7 +14,7 @@ public class RepositoryFilter {
         Predicate<Double> filter = createFilter(filterType);
 
         if (filter == null) {
-            throw new IllegalArgumentException(ExceptionMessages.INVALID_FILTER);
+            throw new InvalidFilterException();
 //            OutputWriter.writeException(ExceptionMessages.INVALID_FILTER);
 //            return;
         }

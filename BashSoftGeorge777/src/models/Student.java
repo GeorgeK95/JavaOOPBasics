@@ -1,7 +1,9 @@
 package models;
 
-import IO.OutputWriter;
 import StaticData.ExceptionMessages;
+import exceptions.DuplicateEntryInStructureException;
+import exceptions.InvalidStringException;
+import exceptions.KeyNotFoundException;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,8 +26,8 @@ public class Student {
 
     public void setMarkOnCourse(String courseName, int... scores) {
         if (!this.enrolledCourses.containsKey(courseName)) {
-            throw new IllegalArgumentException(ExceptionMessages.NOT_ENROLLED_IN_COURSE);
-//            OutputWriter.writeException();
+            throw new KeyNotFoundException();
+//            OutputWriter.writeException(ExceptionMessages.NOT_ENROLLED_IN_COURSE);
 //            return;
         }
 
@@ -47,8 +49,9 @@ public class Student {
 
     public void enrollInCourse(Course course) {
         if (this.enrolledCourses.containsKey(course.getName())) {
-            OutputWriter.writeException(String.format(ExceptionMessages.STUDENT_ALREADY_ENROLLED_IN_GIVEN_COURSE, this.userName, course.getName()));
-            return;
+//            OutputWriter.writeException(String.format(ExceptionMessages.STUDENT_ALREADY_ENROLLED_IN_GIVEN_COURSE, this.userName, course.getName()));
+//            return;
+            throw new DuplicateEntryInStructureException(this.userName, course.getName());
         }
         this.enrolledCourses.put(course.getName(), course);
     }
@@ -59,7 +62,7 @@ public class Student {
 
     private void setUserName(String userName) {
         if (userName == null || userName.equals("")) {
-            throw new IllegalArgumentException(ExceptionMessages.NULL_OR_EMPTY_VALUE);
+            throw new InvalidStringException();
         }
         this.userName = userName;
     }

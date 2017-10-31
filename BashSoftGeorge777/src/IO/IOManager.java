@@ -5,8 +5,9 @@ import Network.DownloadManager;
 import Repository.RepositoryFilter;
 import Repository.RepositorySorter;
 import Repository.StudentsRepository;
-import StaticData.ExceptionMessages;
 import StaticData.SessionData;
+import exceptions.InvalidFileNameException;
+import exceptions.InvalidPathException;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,6 +18,8 @@ import java.util.Queue;
  * Created by George-Lenovo on 6/29/2017.
  */
 public class IOManager {
+    public static final String FORBIDDEN_SYMBOLS_CONTAINED_IN_NAME = "Forbidden symbols contained in name.";
+
     public void traverseDirectory(int depth) {
         Queue<File> queue = new LinkedList<>();
         String path = SessionData.currentPath;
@@ -61,7 +64,7 @@ public class IOManager {
         File f = new File(path);
         boolean wasDirMade = f.mkdir();
         if (!wasDirMade) {
-            throw new IllegalArgumentException(ExceptionMessages.FORBIDDEN_SYMBOLS_CONTAINED_IN_NAME);
+            throw new InvalidFileNameException();
         }
     }
 
@@ -76,7 +79,7 @@ public class IOManager {
                 int lastSlashIndex = currentPath.lastIndexOf("\\");
                 SessionData.currentPath = currentPath.substring(0, lastSlashIndex);
             } catch (StringIndexOutOfBoundsException sioobe) {
-                throw new StringIndexOutOfBoundsException(ExceptionMessages.INVALID_DESTINATION);
+                throw new InvalidPathException();
             }
         } else {
             String currentPath = SessionData.currentPath;
@@ -88,7 +91,7 @@ public class IOManager {
     public void changeCurrentDirAbsolute(String absolutePath) throws IOException {
         File f = new File(absolutePath);
         if (!f.exists()) {
-            throw new IOException(ExceptionMessages.INVALID_PATH);
+            throw new InvalidPathException();
         }
         SessionData.currentPath = absolutePath;
     }

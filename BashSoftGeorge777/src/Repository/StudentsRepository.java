@@ -3,13 +3,18 @@ package Repository;
 import IO.OutputWriter;
 import StaticData.ExceptionMessages;
 import StaticData.SessionData;
+import exceptions.DataAlreadyInitializedException;
+import exceptions.DataNotInitializedException;
 import models.Course;
 import models.Student;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,7 +36,8 @@ public class StudentsRepository {
 
     public void loadData(String fileName) throws IOException {
         if (isDataInitialized) {
-            throw new RuntimeException(ExceptionMessages.DATA_ALREADY_INITIALIZED);
+            throw new DataAlreadyInitializedException();
+//            throw new RuntimeException(ExceptionMessages.DATA_ALREADY_INITIALIZED);
 //            System.out.println(ExceptionMessages.DATA_ALREADY_INITIALIZED);
 //            return;
         }
@@ -42,7 +48,8 @@ public class StudentsRepository {
 
     public void unloadData() {
         if (!isDataInitialized) {
-            throw new RuntimeException(ExceptionMessages.DATA_NOT_INITIALIZED);
+            throw new DataNotInitializedException();
+//            throw new RuntimeException(ExceptionMessages.DATA_NOT_INITIALIZED);
 //            System.out.println(ExceptionMessages.DATA_NOT_INITIALIZED);
 //            return;
         }
