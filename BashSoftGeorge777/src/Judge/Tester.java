@@ -1,7 +1,7 @@
 package Judge;
 
 import IO.OutputWriter;
-import StaticData.ExceptionMessages;
+import exceptions.InvalidPathException;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ public class Tester {
                 OutputWriter.writeMessageOnNewLine("No mismatches.");
             }
         } catch (IOException iae) {
-            throw new IllegalArgumentException(ExceptionMessages.INVALID_PATH);
+            throw new InvalidPathException();
         }
     }
 

@@ -2,15 +2,14 @@ package IO; /**
  * Created by George-Lenovo on 6/29/2017.
  */
 
+import IO.commands.*;
 import Judge.Tester;
 import Network.DownloadManager;
 import Repository.RepositoryFilter;
 import Repository.RepositorySorter;
 import Repository.StudentsRepository;
-import StaticData.SessionData;
+import exceptions.InvalidInputException;
 
-import java.awt.*;
-import java.io.File;
 import java.io.IOException;
 
 public class CommandInterpreter {
@@ -31,71 +30,51 @@ public class CommandInterpreter {
 
     public void interpretCommand(String line) throws IOException {
         String[] data = line.split("\\s+");
-        String command = data[0];
+        String commandName = data[0].toLowerCase();
         try {
-            parseCommand(line, data, command);
-        } catch (IllegalArgumentException iae) {
-            OutputWriter.writeException(iae.getMessage());
-        } catch (StringIndexOutOfBoundsException sioobe) {
-            OutputWriter.writeException(sioobe.getMessage());
-        } catch (IOException ioe) {
-            OutputWriter.writeException(ioe.getMessage());
+            Command command = parseCommand(line, data, commandName);
+            command.execute();
         } catch (Throwable t) {
             OutputWriter.writeException(t.getMessage());
         }
     }
 
-    private void parseCommand(String line, String[] data, String command) throws IOException {
+    private Command parseCommand(String line, String[] data, String command) throws IOException {
         switch (command) {
             case "mkdir":
-                tryCreateDirectory(line, data);
-                break;
+                return new MakeDirectoryCommand(line, data, this.ioManager, this.tester, this.downloadManager, this.studentsRepository);
             case "Is":
-                tryTraverseFolder(line, data);
-                break;
+                return new TraverseFoldersCommand(line, data, this.ioManager, this.tester, this.downloadManager, this.studentsRepository);
             case "cmp":
-                tryCompareFiles(line, data);
-                break;
+                return new CompareFilesCommand(line, data, this.ioManager, this.tester, this.downloadManager, this.studentsRepository);
             case "changeDirRel":
-                tryChangeRelativePath(line, data);
-                break;
+                return new ChangeRelativePathCommand(line, data, this.ioManager, this.tester, this.downloadManager, this.studentsRepository);
             case "changeDirAbs":
-                tryChangeAbsolutePath(line, data);
-                break;
+                return new ChangeAbsolutePathCommand(line, data, this.ioManager, this.tester, this.downloadManager, this.studentsRepository);
             case "readDb":
-                tryReadDbFromFile(line, data);
-                break;
+                return new ReadDatabaseCommand(line, data, this.ioManager, this.tester, this.downloadManager, this.studentsRepository);
             case "download":
-                tryDownloadFile(line, data);
-                break;
+                return new DownloadFileCommand(line, data, this.ioManager, this.tester, this.downloadManager, this.studentsRepository);
             case "downloadAsync":
-                tryDownloadFileOnNewThread(line, data);
-                break;
-            case "help":
-                getHelp();
-                break;
+                return new DownloadAsynchCommand(line, data, this.ioManager, this.tester, this.downloadManager, this.studentsRepository);
             case "open":
-                tryOpenFile(line, data);
-                break;
+                return new OpenFileCommand(line, data, this.ioManager, this.tester, this.downloadManager, this.studentsRepository);
+            case "help":
+                return new GetHelpCommand(line, data, this.ioManager, this.tester, this.downloadManager, this.studentsRepository);
             case "show":
-                tryShowCourse(line, data);
-                break;
+                return new ShowCourseCommand(line, data, this.ioManager, this.tester, this.downloadManager, this.studentsRepository);
             case "filter":
-                tryPrintFilteredStudents(line, data);
-                break;
+                return new PrintFilteredStudentsCommand(line, data, this.ioManager, this.tester, this.downloadManager, this.studentsRepository);
             case "order":
-                tryPrintOrderedStudents(line, data);
-                break;
+                return new PrintOrderedStudentsCommand(line, data, this.ioManager, this.tester, this.downloadManager, this.studentsRepository);
             case "dropdb":
-                tryDropDb(line, data);
-                break;
+                return new DropDatabaseCommand(line, data, this.ioManager, this.tester, this.downloadManager, this.studentsRepository);
             default:
-                displayInvalidCommand(line);
-                break;
+                throw new InvalidInputException(line);
         }
     }
 
-    private void tryDropDb(String line, String[] data) {
+   /* private void tryDropDb(String line, String[] data) {
         if (data.length != 1) {
             displayInvalidCommand(line);
             return;
@@ -256,5 +235,5 @@ public class CommandInterpreter {
 
     private void displayInvalidCommand(String line) {
         OutputWriter.writeMessageOnNewLine(String.format("The command %s is invalid.", line));
-    }
+    }*/
 }
