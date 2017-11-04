@@ -16,7 +16,7 @@ abstract class Mammal extends Animal {
     @Override
     public String toString() {
         return String.format("%s[%s, %s, %s, %d]", super.getAnimalType(),
-                super.getAnimalName(), new DecimalFormat("0.######").format(super.getAnimalWeight()), this.getLivingRegion(), super.getFoodEaten());
+                super.getAnimalName(), new DecimalFormat("#.##").format(super.getAnimalWeight()), this.getLivingRegion(), super.getFoodEaten());
     }
 
     String getLivingRegion() {

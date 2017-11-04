@@ -1,22 +1,33 @@
 package wildFarm;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 /**
  * Created by George-Lenovo on 6/29/2017.
  */
 public class Main {
+    private static List<Animal> animals = new ArrayList<>();
+
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
         while (true) {
             String animal = in.nextLine();
             if (animal.equals("End")) {
+                print();
                 break;
             }
             String[] animalData = animal.split("\\s+");
             String[] vegetableData = in.nextLine().split("\\s+");
 
             processAnimal(animalData, vegetableData);
+        }
+    }
+
+    private static void print() {
+        for (Animal animal : animals) {
+            System.out.println(animal);
         }
     }
 
@@ -64,7 +75,7 @@ public class Main {
             } catch (IllegalArgumentException iae) {
                 System.out.println(iae.getMessage());
             }
-            System.out.println(animal);
+            animals.add(animal);
         } catch (IllegalArgumentException iae) {
             System.out.println(iae.getMessage());
         }
