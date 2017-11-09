@@ -6,6 +6,8 @@ import app.utilities.InputParser;
 
 import java.util.List;
 
+import static app.utilities.Constants.INPUT_TERMINATING_COMMAND;
+
 public class Engine {
     private ConsoleInputReader inputReader;
     private ConsoleOutputWriter outputWriter;
@@ -26,7 +28,7 @@ public class Engine {
 
             this.dispatchCommand(commandParams);
             //INPUT_TERMINATING_COMMAND - this is your terminated command
-            if (inputLine.equals("INPUT_TERMINATING_COMMAND")) {
+            if (inputLine.equals(INPUT_TERMINATING_COMMAND)) {
                 break;
             }
         }
