@@ -2,11 +2,10 @@ package app.engines;
 
 import app.io.ConsoleInputReader;
 import app.io.ConsoleOutputWriter;
+import app.utilities.Constants;
 import app.utilities.InputParser;
 
 import java.util.List;
-
-import static app.utilities.Constants.INPUT_TERMINATING_COMMAND;
 
 public class Engine {
     private ConsoleInputReader inputReader;
@@ -22,15 +21,10 @@ public class Engine {
     public void run() {
         String inputLine;
 
-        while(true) {
-            inputLine = this.inputReader.readLine();
+        while(!(inputLine = this.inputReader.readLine()).equals(Constants.INPUT_TERMINATING_COMMAND)) {
             List<String> commandParams = this.inputParser.parseInput(inputLine);
 
             this.dispatchCommand(commandParams);
-            //INPUT_TERMINATING_COMMAND - this is your terminated command
-            if (inputLine.equals(INPUT_TERMINATING_COMMAND)) {
-                break;
-            }
         }
     }
 

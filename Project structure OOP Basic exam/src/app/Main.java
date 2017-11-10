@@ -13,6 +13,5 @@ public class Main {
 
         engine.run();*/
 
-        System.out.println(12);
     }
 }
